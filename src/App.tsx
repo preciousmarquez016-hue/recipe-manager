@@ -14,7 +14,7 @@ export default function App() {
   const [filter, setFilter] = useState("All");
   const [editing, setEditing] = useState<SavedRecipe | null>(null);
 
-  // Every fetch lives behind a hook (Lab 11). Components never see axios.
+
   const search = useSearchMeals(term);
   const categories = useCategories();
   const {
@@ -30,11 +30,8 @@ export default function App() {
 
   const results = search.data ?? [];
 
-  // TODO 13 — Derive, do not store.
-  //
-  // Filter `saved` by the active category here in render. Do not add a
-  // useState for the filtered list and do not add a useEffect to sync it.
-  const visible = saved;
+  const visible =
+    filter === "All" ? saved : saved.filter((r) => r.category === filter);
 
   return (
     <div className="min-h-screen bg-base-200 py-8 px-4">
@@ -46,12 +43,6 @@ export default function App() {
           </p>
         </header>
 
-        <div className="alert alert-info">
-          <span>
-            Starter template. The saved list and Delete already work — everything
-            else is a TODO. Delete this alert before you submit.
-          </span>
-        </div>
 
         <SearchBar onSearch={setTerm} />
 
@@ -82,7 +73,9 @@ export default function App() {
                   meal={meal}
                   onSave={create.mutate}
                   isSaved={savedMealIds.has(meal.mealId)}
-                  isSaving={create.isPending && create.variables?.mealId === meal.mealId}
+                  isSaving={
+                    create.isPending && create.variables?.mealId === meal.mealId
+                  }
                 />
               ))}
             </div>
